@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 interface TextareaFieldProps {
   id: string;
@@ -25,7 +25,7 @@ const TextareaField: React.FC<TextareaFieldProps> = ({
 }) => {
   return (
     <div className="mb-4">
-      <label 
+      <label
         htmlFor={id}
         className="block text-sm font-medium text-gray-700 mb-1"
       >
@@ -40,7 +40,7 @@ const TextareaField: React.FC<TextareaFieldProps> = ({
         placeholder={placeholder}
         rows={rows}
         className={`w-full px-4 py-2 rounded-md border ${
-          error ? 'border-red-500 bg-red-50' : 'border-gray-300'
+          error ? "border-red-500 bg-red-50" : "border-gray-300"
         } focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200`}
       />
       {error && (
@@ -49,3 +49,5 @@ const TextareaField: React.FC<TextareaFieldProps> = ({
     </div>
   );
 };
+
+export default TextareaField;
