@@ -20,9 +20,15 @@ export interface FormState {
   hasError: boolean;
 }
 
-export type FormAction = 
+export interface FormSubmissionResult {
+  success: boolean;
+  message: string;
+  personalizedResponse?: string;
+}
+
+export type FormAction =
   | { type: 'UPDATE_FIELD'; field: keyof LeadFormData; value: string }
   | { type: 'SET_ERRORS'; errors: FormErrors }
   | { type: 'SUBMIT_START' }
-  | { type: 'SUBMIT_SUCCESS' }
+  | { type: 'SUBMIT_SUCCESS'; personalizedResponse?: string }
   | { type: 'SUBMIT_ERROR' };

@@ -1,6 +1,6 @@
 import { LeadFormData } from '../types/form';
 
-const FORM_SUBMIT_ENDPOINT = 'https://formsubmit.co/andrew.bissada@gmail.com'; // Replace with your FormSubmit email
+const FORM_SUBMIT_ENDPOINT = 'https://formsubmit.co/your-email@example.com'; // Replace with your actual email address
 
 export const generateAIResponse = (data: LeadFormData): string => {
   // In a real implementation, this would call an AI API
@@ -85,21 +85,23 @@ export const submitForm = async (data: LeadFormData): Promise<{ success: boolean
     formData.append('_subject', `New Lead: ${data.name} from ${data.businessType} business`);
     formData.append('_autoresponse', personalizedResponse);
     
-    // In a real implementation, you would actually submit this data:
-    // const response = await fetch(FORM_SUBMIT_ENDPOINT, {
-    //   method: 'POST',
-    //   body: formData,
-    //   headers: {
-    //     'Accept': 'application/json'
-    //   }
-    // });
-    
-    // For demo purposes, we'll simulate a successful submission
-    await new Promise(resolve => setTimeout(resolve, 1500));
+    // Submit the form data to FormSubmit.co
+    const response = await fetch(FORM_SUBMIT_ENDPOINT, {
+      method: 'POST',
+      body: formData,
+      headers: {
+        'Accept': 'application/json'
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error('Form submission failed');
+    }
     
     return {
       success: true,
-      message: 'Thank you for your submission! We\'ve sent you a personalized response.'
+      message: 'Thank you for your submission! We\'ve sent you a personalized response.',
+      personalizedResponse
     };
   } catch (error) {
     console.error('Form submission error:', error);

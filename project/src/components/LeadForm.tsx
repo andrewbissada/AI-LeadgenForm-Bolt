@@ -19,6 +19,7 @@ const initialState: FormState = {
   isSubmitting: false,
   isSubmitted: false,
   hasError: false,
+  personalizedResponse: '',
 };
 
 const formReducer = (state: FormState, action: FormAction): FormState => {
@@ -51,6 +52,7 @@ const formReducer = (state: FormState, action: FormAction): FormState => {
         ...state,
         isSubmitting: false,
         isSubmitted: true,
+        personalizedResponse: action.personalizedResponse || '',
       };
     case 'SUBMIT_ERROR':
       return {
@@ -81,7 +83,7 @@ const serviceOptions = [
 
 const LeadForm: React.FC = () => {
   const [state, dispatch] = useReducer(formReducer, initialState);
-  const { data, errors, isSubmitting, isSubmitted, hasError } = state;
+  const { data, errors, isSubmitting, isSubmitted, hasError, personalizedResponse } = state;
 
   useEffect(() => {
     if (isSubmitted) {
@@ -89,7 +91,7 @@ const LeadForm: React.FC = () => {
         // If we wanted to reset the form, we could do it here
         // For now, we'll keep the success state
       }, 5000);
-      
+
       return () => clearTimeout(timer);
     }
   }, [isSubmitted]);
@@ -107,21 +109,21 @@ const LeadForm: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     const formErrors = validateForm(data);
     dispatch({ type: 'SET_ERRORS', errors: formErrors });
-    
+
     if (Object.keys(formErrors).length > 0) {
       return;
     }
-    
+
     dispatch({ type: 'SUBMIT_START' });
-    
+
     try {
       const result = await submitForm(data);
-      
+
       if (result.success) {
-        dispatch({ type: 'SUBMIT_SUCCESS' });
+        dispatch({ type: 'SUBMIT_SUCCESS', personalizedResponse: result.personalizedResponse });
       } else {
         dispatch({ type: 'SUBMIT_ERROR' });
       }
@@ -138,8 +140,10 @@ const LeadForm: React.FC = () => {
           <CheckCircle className="w-16 h-16 mx-auto text-green-500 mb-4" />
           <h2 className="text-2xl font-bold text-gray-800 mb-2">Thank You!</h2>
           <p className="text-gray-600 mb-4">
-            We've received your information and sent you a personalized response.
-            Our team will be in touch with you shortly.
+            We've received your information and here is a personalized response.
+          </p>
+          <p className="text-gray-700 mb-4">
+             {personalizedResponse}
           </p>
           <button
             onClick={() => window.location.reload()}
@@ -164,7 +168,7 @@ const LeadForm: React.FC = () => {
           Fill out the form below and we'll send you a personalized response.
         </p>
       </div>
-      
+
       <InputField
         id="name"
         name="name"
@@ -174,7 +178,7 @@ const LeadForm: React.FC = () => {
         onChange={handleChange}
         required
       />
-      
+
       <InputField
         id="email"
         name="email"
@@ -185,7 +189,7 @@ const LeadForm: React.FC = () => {
         onChange={handleChange}
         required
       />
-      
+
       <SelectField
         id="businessType"
         name="businessType"
@@ -196,7 +200,7 @@ const LeadForm: React.FC = () => {
         onChange={handleChange}
         required
       />
-      
+
       <SelectField
         id="serviceNeeded"
         name="serviceNeeded"
@@ -207,7 +211,7 @@ const LeadForm: React.FC = () => {
         onChange={handleChange}
         required
       />
-      
+
       <TextareaField
         id="message"
         name="message"
@@ -216,7 +220,7 @@ const LeadForm: React.FC = () => {
         onChange={handleChange}
         placeholder="Tell us more about your project or requirements..."
       />
-      
+
       {hasError && (
         <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-md flex items-center">
           <AlertCircle className="w-5 h-5 text-red-500 mr-2" />
@@ -225,7 +229,7 @@ const LeadForm: React.FC = () => {
           </p>
         </div>
       )}
-      
+
       <button
         type="submit"
         disabled={isSubmitting}
